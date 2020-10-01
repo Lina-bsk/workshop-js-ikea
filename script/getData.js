@@ -54,7 +54,31 @@ search(value, callback) {
     })
     callback(result);
   })
+},
+
+catalog(callback) {
+  this.get((data) => {
+    const result = [];
+    data.filter(item => {
+      if(!result.includes(item.category)) {
+        result.push(item.category);
+      }
+    });
+    callback(result);
+  });
+},
+
+subCatalog(value, callback) {
+  this.get((data) => {
+    const result = [];
+    data.filter(item => item.category === value)
+    .forEach(item => {
+      if(!result.includes(item.subcategory)) {
+        result.push(item.subcategory);
+      }
+    });
+
+    callback(result);
+  });
 }
 };
-
-// getData.get();
