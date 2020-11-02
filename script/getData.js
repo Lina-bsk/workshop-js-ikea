@@ -6,14 +6,26 @@ const PARAM = {
 
 export const getData = {
   url: 'database/dataBase.json',
+  
+  async getData(url){
+  
+    const response = await fetch(url);
+  
+    if(!response.ok) {
+      throw new Error(`Ошибка по адресу ${url}, статус ошибки ${response}`);
+    }
+  
+    return await response.json();
+  },
+  
   get(process) {
-    fetch(this.url)
-    .then(response => response.json())
-    .then(process);
-    },
+    this.getData(this.url)
+        .then(process)
+        .catch((err) => console.error(err));
+  },
     
   wishList(list, callback) {
-    this.get((data) => {
+    this.get((data) => { 
       const result = data.filter((item) => list.includes(item.id));
       callback(result); 
     })
@@ -58,12 +70,12 @@ search(value, callback) {
 
 catalog(callback) {
   this.get((data) => {
-    const result = [];
-    data.filter(item => {
-      if(!result.includes(item.category)) {
-        result.push(item.category);
+    const result = data.reduce((arr, item) => {
+      if(!arr.includes(item.category)) {
+        arr.push(item.category);
       }
-    });
+      return arr;
+    }, [])
     callback(result);
   });
 },
